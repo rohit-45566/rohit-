@@ -23,16 +23,6 @@ const UserDashboard = () => {
           <h3>Post a Complaint</h3>
           <p>Report issues in your local area with images.</p>
         </div>
-        
-        <div className="card" onClick={() => navigate('/view-status')}>
-          <h3>Complaint Status</h3>
-          <p>Track the progress of your submitted complaints.</p>
-        </div>
-        
-        <div className="card" onClick={() => navigate('/events')}>
-          <h3>Local Events</h3>
-          <p>View upcoming events and announcements.</p>
-        </div>
 
         <div className="card" onClick={() => navigate('/feedback')}>
           <h3>Give Feedback</h3>
