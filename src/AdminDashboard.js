@@ -1,84 +1,48 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import logout from "./logout"; // Import the logout function
-import "./AdminDashboard.css"; // For styling
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const admin = JSON.parse(localStorage.getItem('admin'));
 
-  // Determine greeting based on time of day
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 18) return "Good Afternoon";
-    return "Good Evening";
+  const handleLogout = () => {
+    localStorage.removeItem('admin');
+    navigate('/admin/login');
   };
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <div className="profile-section">
-          <img
-            src={require("./images/cgpt.png")} // Profile picture
-            alt="Profile"
-            className="profile-pic"
-          />
-          <h1 className="greeting">{getGreeting()}, Admin!</h1>
-          <button onClick={() => logout(navigate)}>Logout</button> {/* Logout button */}
+    <div className="admin-dashboard">
+      <nav className="admin-nav">
+        <h1>Admin Panel: {admin ? admin.username : 'Administrator'}</h1>
+        <button onClick={handleLogout} className="logout-btn">Logout</button>
+      </nav>
+
+      <div className="admin-grid">
+        <div className="admin-card" onClick={() => navigate('/view-complaints')}>
+          <div className="card-icon">📋</div>
+          <h3>Manage Complaints</h3>
+          <p>View and update the status of citizen complaints.</p>
         </div>
-      </header>
 
-      <main className="dashboard-main">
-        <div className="dashboard-grid">
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/view-complaints")}
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Post a Complaint"
-              className="card-icon"
-            />
-            <h2>View Complaints</h2>
-          </div>
-
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/events")}
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Swachatha Events"
-              className="card-icon"
-            />
-            <h2>Events</h2>
-          </div>
-
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/status")}
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Status"
-              className="card-icon"
-            />
-            <h2>Status</h2>
-          </div>
-
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/view-feedback")}
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Feedback"
-              className="card-icon"
-            />
-            <h2>View Feedback</h2>
-          </div>
+        <div className="admin-card" onClick={() => navigate('/admin/post-event')}>
+          <div className="card-icon">📅</div>
+          <h3>Post New Event</h3>
+          <p>Announce local programs, meetings, or maintenance.</p>
         </div>
-      </main>
+
+        <div className="admin-card" onClick={() => navigate('/view-feedback')}>
+          <div className="card-icon">💬</div>
+          <h3>User Feedback</h3>
+          <p>Review ratings and suggestions from the community.</p>
+        </div>
+
+        <div className="admin-card" onClick={() => navigate('/admin/manage-status')}>
+          <div className="card-icon">🔄</div>
+          <h3>Update Progress</h3>
+          <p>Modify real-time status updates for active issues.</p>
+        </div>
+      </div>
     </div>
   );
 };

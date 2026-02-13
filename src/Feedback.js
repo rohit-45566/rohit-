@@ -1,87 +1,70 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import axios from "axios";
-import "./Feedback.css";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Feedback.css';
 
 const Feedback = () => {
-  const [date, setDate] = useState("");
-  const [description, setDescription] = useState("");
-  const [rating, setRating] = useState(0);
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Initialize navigate
+  const [formData, setFormData] = useState({
+    date: new Date().toISOString().split('T')[0],
+    description: '',
+    rating: 5
+  });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await axios.post("http://localhost:5000/api/feedback", {
-        date,
-        description,
-        rating,
+      const response = await fetch('http://localhost:5000/api/feedback', { //
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      console.log("Server Response:", response.data); // Log the response from the server
-
-      if (response.data.success) {
-        setMessage("Feedback submitted successfully!");
-        setDate("");
-        setDescription("");
-        setRating("");
-      } else {
-        setMessage("Error submitting feedback. Please try again.");
+      if (response.ok) {
+        alert("Thank you for your feedback!");
+        navigate('/user/dashboard');
       }
     } catch (error) {
-      console.error("Error:", error);
-      setMessage("Server error. Please try again later.");
+      console.error("Submission error:", error);
     }
   };
 
-  const handleBack = () => {
-    navigate(-1); // Navigate to the previous page
-  };
-
   return (
-    <div className="feedback-container">
-      
-      <h1>Feedback Form</h1>
-      {message && <p className="message">{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          Date:
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+    <div className="feedback-form-container">
+      <div className="form-card">
+        <h2>Submit Feedback</h2>
+        <form onSubmit={handleSubmit}>
+          <label>Date</label>
+          <input 
+            type="date" 
+            value={formData.date} 
+            onChange={(e) => setFormData({...formData, date: e.target.value})} 
+            required 
+          />
+
+          <label>Rating (1-5)</label>
+          <select 
+            value={formData.rating} 
+            onChange={(e) => setFormData({...formData, rating: Number(e.target.value)})}
+          >
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Very Good</option>
+            <option value="3">3 - Good</option>
+            <option value="2">2 - Fair</option>
+            <option value="1">1 - Poor</option>
+          </select>
+
+          <label>Description</label>
+          <textarea 
+            placeholder="Tell us about your experience..."
+            value={formData.description}
+            onChange={(e) => setFormData({...formData, description: e.target.value})}
             required
           />
-        </label>
-        <label>
-          Feedback Description:
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Write your feedback here..."
-            required
-          ></textarea>
-        </label>
-        <label>
-          Rating:
-          <select value={rating} onChange={(e) => setRating(e.target.value)} required>
-            <option value="" disabled>
-              Select Rating
-            </option>
-            {[1, 2, 3, 4, 5].map((value) => (
-              <option key={value} value={value}>
-                {value} Star{value > 1 ? "s" : ""}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit">Submit Feedback</button>
-        <button onClick={handleBack} className="back-button">
-        ← Back
-      </button>
-      </form>
+
+          <button type="submit" className="submit-btn">Submit Feedback</button>
+          <button type="button" onClick={() => navigate(-1)} className="cancel-btn">Back</button>
+        </form>
+      </div>
     </div>
   );
 };

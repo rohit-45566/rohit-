@@ -1,31 +1,58 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logout from './logout'; // Import the logout function
-import Modal from './Modal'; // Import the Modal component
+import './Navbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  
+  // Check login status from localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
+  const admin = JSON.parse(localStorage.getItem('admin'));
 
   const handleLogout = () => {
-    logout(navigate); // Call the logout function
-    setShowModal(true); // Show the modal
+    localStorage.removeItem('user');
+    localStorage.removeItem('admin');
+    navigate('/');
   };
-
-  const closeModal = () => {
-    setShowModal(false); // Close the modal
-  };
-
-  const userRole = localStorage.getItem("userRole");
-
-  if (userRole) return null; // If logged in, don't show navbar
 
   return (
-    <nav>
-      <a href="/">Home</a>
-      <a href="/user/login">User Login</a>
-      <a href="/admin/login">Admin Login</a>
+    <nav className="navbar">
+      <div className="navbar-logo">
+        <Link to="/">ComplaintSystem</Link>
+      </div>
+      <ul className="navbar-links">
+        <li><Link to="/">Home</Link></li>
+        
+        {/* User Specific Links */}
+        {user && (
+          <>
+            <li><Link to="/user/dashboard">Dashboard</Link></li>
+            <li><Link to="/post-complaint">Post Complaint</Link></li>
+            <li><Link to="/view-status">Track Status</Link></li>
+          </>
+        )}
+
+        {/* Admin Specific Links */}
+        {admin && (
+          <>
+            <li><Link to="/admin/dashboard">Admin Panel</Link></li>
+            <li><Link to="/view-complaints">Manage Complaints</Link></li>
+            <li><Link to="/view-feedback">View Feedback</Link></li>
+          </>
+        )}
+
+        {/* General Auth Links */}
+        {!user && !admin ? (
+          <>
+            <li><Link to="/user/login">User Login</Link></li>
+            <li><Link to="/admin/login">Admin Login</Link></li>
+          </>
+        ) : (
+          <li><button onClick={handleLogout} className="logout-nav-btn">Logout</button></li>
+        )}
+      </ul>
     </nav>
   );
 };
+
 export default Navbar;

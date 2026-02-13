@@ -1,104 +1,108 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./ViewComplaints.css"; // Assuming you have a CSS file for styling
+import Modal from "./Modal"; // Ensure you have the Modal component created
+import BackButton from "./BackButton";
+import "./ViewComplaints.css";
 
 const ViewComplaints = () => {
   const [complaints, setComplaints] = useState([]);
   const [error, setError] = useState(null);
-  const [modalImage, setModalImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   
-  // Function to fetch complaints data from the backend
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/get-complaints"); // Replace with your backend API URL
+      const response = await fetch("http://localhost:5000/get-complaints"); 
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
       const data = await response.json();
-      setComplaints(data); // Set fetched data to state
+      setComplaints(data);
     } catch (err) {
-      setError(err.message); // Set error message if the fetch fails
+      setError(err.message);
     }
   };
+
   const handleImageClick = (imageSrc) => {
-    setModalImage(imageSrc);
+    setSelectedImage(imageSrc);
+    setIsModalOpen(true);
   };
 
-  
-  const handleBack = () => {
-    navigate(-1); // Navigate to the previous page
-  };
-  // Function to close the modal
-  const closeModal = () => {
-    setModalImage(null);
-  };
-
-  // useEffect to call fetchData when the component loads
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <div className="view-complaints-container">
-      <h1>Complaints</h1>
-      {error && <p className="error">Error: {error}</p>}
-      <table className="complaints-table">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Complaint</th>
-            <th>Date</th>
-            <th>Location</th>
-            <th>Sub-Location</th>
-            <th>Pin Code</th>
-            <th>Image</th>
-          </tr>
-        </thead>
-        <tbody>
-          {complaints.length > 0 ? (
-            complaints.map((complaint, index) => (
-              <tr key={index}>
-                <td>{complaint.username}</td>
-                <td>{complaint.complaintText}</td>
-                <td>{new Date(complaint.date).toLocaleDateString()}</td>
-                <td>{complaint.location}</td>
-                <td>{complaint.subLocation || "N/A"}</td>
-                <td>{complaint.roomNo || "N/A"}</td>
-                <td>
-          {complaint.image ? (
-            <img
-              src={complaint.image}
-              alt="Complaint"
-              style={{ width: "100px", height: "auto" }}
-            />
-          ) : (
-            "No Image"
-          )}
-        </td>
-              </tr>
-            ))
-          ) : (
+      <div className="view-header">
+        <h1>Administrative Dashboard: Complaints</h1>
+        <BackButton />
+      </div>
+
+      {error && <div className="error-banner">Error: {error}</div>}
+
+      <div className="table-wrapper">
+        <table className="complaints-table">
+          <thead>
             <tr>
-              <td colSpan="7">No complaints found.</td>
+              <th>Username</th>
+              <th>Complaint Details</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Room/Pin</th>
+              <th>Image</th>
+              <th>Actions</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-      {modalImage && (
-        <div className="modal" onClick={closeModal}>
-          <span className="close">&times;</span>
-          <img src={modalImage} alt="Enlarged Complaint" className="modal-content" />
-        </div>
-      )}
-      <button
-        onClick={handleBack}
-        className="back-button"
-      >
-        ← Back
-      </button>
+          </thead>
+          <tbody>
+            {complaints.length > 0 ? (
+              complaints.map((complaint, index) => (
+                <tr key={index}>
+                  <td>{complaint.username}</td>
+                  <td className="text-cell">{complaint.complaintText}</td>
+                  <td>{new Date(complaint.date).toLocaleDateString()}</td>
+                  <td>
+                    <span className="location-tag">{complaint.location}</span>
+                    <br />
+                    <small>{complaint.subLocation || "N/A"}</small>
+                  </td>
+                  <td>{complaint.roomNo || "N/A"}</td>
+                  <td>
+                    {complaint.image ? (
+                      <img
+                        src={complaint.image}
+                        alt="Proof"
+                        className="thumbnail"
+                        onClick={() => handleImageClick(complaint.image)}
+                      />
+                    ) : (
+                      <span className="no-image">No Image</span>
+                    )}
+                  </td>
+                  <td>
+                    <button 
+                      className="status-btn"
+                      onClick={() => navigate(`/update-status/${complaint.date}`)}
+                    >
+                      Update Status
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="empty-row">No complaints found in the system.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <img src={selectedImage} alt="Enlarged complaint proof" className="modal-img" />
+      </Modal>
     </div>
-    
   );
 };
 

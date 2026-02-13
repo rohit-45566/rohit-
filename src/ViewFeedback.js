@@ -1,63 +1,55 @@
-import React, { useEffect, useState } from "react";
-import "./ViewFeedback.css"; // Ensure this file contains your CSS
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './ViewFeedback.css';
 
 const ViewFeedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchFeedbacks = async () => {
+    const fetchFeedback = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/feedback");
-        if (!response.ok) {
-          throw new Error("Failed to fetch feedbacks");
-        }
+        const response = await fetch('http://localhost:5000/api/feedback'); //
         const data = await response.json();
         setFeedbacks(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching feedback:", error);
-      } finally {
         setLoading(false);
       }
     };
-    fetchFeedbacks();
+    fetchFeedback();
   }, []);
-
-  if (loading) {
-    return <p>Loading feedback...</p>;
-  }
 
   return (
     <div className="view-feedback-container">
-      {/* Back Button */}
-      <button className="back-button" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+      <div className="feedback-header">
+        <h1>User Feedback & Ratings</h1>
+        <button onClick={() => navigate(-1)} className="back-btn">← Back</button>
+      </div>
 
-      <h1>Feedback Overview</h1>
-      {feedbacks.length > 0 ? (
-        <table className="feedback-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Rating</th>
-            </tr>
-          </thead>
-          <tbody>
-            {feedbacks.map((feedback) => (
-              <tr key={feedback._id}> {/* Use unique key */}
-                <td>{feedback.date || "N/A"}</td>
-                <td>{feedback.description || "Not provided"}</td>
-                <td>{feedback.rating || "Not rated"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {loading ? (
+        <p className="loading">Loading feedback...</p>
       ) : (
-        <p className="no-feedback-message">No feedback available.</p>
+        <div className="feedback-grid">
+          {feedbacks.length > 0 ? (
+            feedbacks.map((item, index) => (
+              <div key={index} className="feedback-card">
+                <div className="card-top">
+                  <span className="feedback-date">{item.date}</span>
+                  <div className="rating-badge">★ {item.rating}/5</div>
+                </div>
+                <p className="description">{item.description}</p>
+                <div className="card-footer">
+                  <span className="timestamp">Received: {new Date(item.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="no-data">No feedback submitted yet.</p>
+          )}
+        </div>
       )}
     </div>
   );

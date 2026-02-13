@@ -1,99 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import blackBackground from "./images/cgpt.png"; // Import black background
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import './UserLogin.css';
 
 const UserLogin = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-  });
-
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const userRole = localStorage.removeItem("userRole");
-    if (userRole === 'admin') {
-      alert('You are already logged in as an admin. Please log out to access user.');
-      navigate('/admin/dashboard');
-    }
-  }, [navigate]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
     try {
       const response = await fetch('http://localhost:5000/user/login', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       });
 
-      const result = await response.json();
-      
+      const data = await response.json();
+
       if (response.ok) {
-        alert(result.message);
-        localStorage.setItem('userRole', 'user');
+        // Store user info in localStorage for use in other components like PostComplaint
+        localStorage.setItem('user', JSON.stringify({ username }));
         navigate('/user/dashboard');
       } else {
-        alert(result.error || 'Login failed. Please check your credentials.');
+        setError(data.error || 'Login failed');
       }
-
-    } catch (error) {
-      console.error('Login Error:', error);
-      alert('Server error. Please try again later.');
+    } catch (err) {
+      setError('Server error. Please try again later.');
     }
   };
 
   return (
-    <div
-      className="user-login-container"
-      style={{
-        backgroundImage: `url(${blackBackground})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <div className="user-login-box">
-        <h2 style={{ textAlign: "center", color: "#1a73e8" }}>
-          Citizen Login
-        </h2>
-
+    <div className="login-container">
+      <div className="login-box">
+        <h2>User Login</h2>
+        {error && <p className="error-msg">{error}</p>}
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
+          <div className="input-group">
+            <label>Username</label>
+            <input 
+              type="text" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)} 
+              required 
             />
           </div>
-
-          <div className="form-group">
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required
+          <div className="input-group">
+            <label>Password</label>
+            <input 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required 
             />
           </div>
-
-          <button className="common-button" type="submit">
-            Login
-          </button>
+          <button type="submit" className="login-btn">Login</button>
         </form>
+        <p className="redirect-text">
+          Don't have an account? <Link to="/user/signup">Register here</Link>
+        </p>
       </div>
     </div>
   );

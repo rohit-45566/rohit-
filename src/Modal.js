@@ -1,12 +1,18 @@
 import React from 'react';
-import './Modal.css'; // Import the CSS for styling
+import './Modal.css';
 
-const Modal = ({ message, onClose }) => {
+const Modal = ({ isOpen, onClose, children }) => {
+  if (!isOpen) return null;
+
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>{message}</h2>
-        <button onClick={onClose}>Close</button>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onClose}>
+          &times;
+        </button>
+        <div className="modal-content">
+          {children}
+        </div>
       </div>
     </div>
   );

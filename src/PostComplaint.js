@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PostComplaint.css';
-import blueBackground from "./images/cgpt.png";
 
 const PostComplaint = () => {
   const navigate = useNavigate();
-
-  const [complaintText, setComplaintText] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [complaintText, setComplaintText] = useState('');
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
   const [subLocation, setSubLocation] = useState('');
-  const [error, setError] = useState('');
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [error, setError] = useState('');
 
-  // Get username and email from localStorage on mount
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
@@ -25,51 +22,31 @@ const PostComplaint = () => {
     }
   }, []);
 
-  const handleLocationChange = (e) => {
-    setLocation(e.target.value);
-    setSubLocation('');
-  };
-
-  const handleSubLocationChange = (e) => {
-    setSubLocation(e.target.value);
-  };
-
-  const handleBack = () => {
-    navigate(-1); // Navigate to the previous page
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-    setPreview(URL.createObjectURL(file)); // Live image preview
+    setPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validation
-    if (!complaintText || !username || !email || !date || !location || ((location === 'college' || location === 'hostel') && !subLocation)) {
-      setError('All fields are required!');
-      return;
-    }
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('complaintText', complaintText);
+    formData.append('date', date);
+    formData.append('location', location);
+    formData.append('subLocation', subLocation);
+    if (image) formData.append('image', image);
 
     try {
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('email', email);
-      formData.append('complaintText', complaintText);
-      formData.append('date', date);
-      formData.append('location', location);
-      formData.append('subLocation', subLocation);
-      if (image) formData.append('image', image);
-
       const response = await fetch('http://localhost:5000/submit-complaint', {
         method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
-        alert('Your complaint was submitted successfully!');
+        alert('Complaint submitted successfully!');
         navigate('/user/dashboard');
       } else {
         setError('Failed to submit complaint');
@@ -80,95 +57,46 @@ const PostComplaint = () => {
   };
 
   return (
-    <div className="post" style={{ backgroundImage: `url(${blueBackground})` }}>
-      <div className="container">
-        <h1>Post a Complaint</h1>
-
+    <div className="post-container">
+      <div className="form-box">
+        <h2>Post a Complaint</h2>
         {error && <div className="error-message">{error}</div>}
-
-        <form onSubmit={handleSubmit} className="complaint-form">
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-          />
-
-          <select value={location} onChange={handleLocationChange} required>
+        <form onSubmit={handleSubmit}>
+          <input type="text" placeholder="Username" value={username} readOnly />
+          <input type="email" placeholder="Email" value={email} readOnly />
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+          
+          <select value={location} onChange={(e) => setLocation(e.target.value)} required>
             <option value="">Select Location</option>
             <option value="college">College</option>
-            <option value="bus">Bus</option>
-            <option value="library">Library</option>
-            <option value="gym">GYM</option>
-            <option value="canteen">Canteen</option>
             <option value="hostel">Hostel</option>
-            <option value="dispensary">Dispensary</option>
+            <option value="library">Library</option>
           </select>
 
-          {location && (
-            <select value={subLocation} onChange={handleSubLocationChange} required>
-              <option value="">Select SubLocation</option>
-              {location === 'college' && (
-                <>
-                  <option value="CSE">CSE</option>
-                  <option value="IT">IT</option>
-                  <option value="AI-ML">AI-ML</option>
-                  <option value="ECE">ECE</option>
-                  <option value="MECH">MECH</option>
-                  <option value="CIVIL">CIVIL</option>
-                  <option value="CFRO">CFRO</option>
-                </>
-              )}
-              {location === 'bus' && <option value="college">college</option>}
-              {location === 'hostel' && (
-                <>
-                  <option value="girls">Girls</option>
-                  <option value="boys">Boys</option>
-                </>
-              )}
-              {location === 'gym' && (
-                <>
-                  <option value="girls">Girls</option>
-                  <option value="boys">Boys</option>
-                </>
-              )}
+          {location === 'college' && (
+            <select value={subLocation} onChange={(e) => setSubLocation(e.target.value)} required>
+              <option value="">Select Department</option>
+              <option value="CSE">CSE</option>
+              <option value="IT">IT</option>
+              <option value="ECE">ECE</option>
             </select>
           )}
 
-
-          <textarea
-            placeholder="Describe your complaint..."
-            value={complaintText}
-            onChange={(e) => setComplaintText(e.target.value)}
-            required
+          <textarea 
+            placeholder="Describe your issue..." 
+            value={complaintText} 
+            onChange={(e) => setComplaintText(e.target.value)} 
+            required 
           />
 
-          <div className="image-upload">
-            <label htmlFor="image">Upload Image:</label>
-            <input type="file" id="image" accept="image/*" onChange={handleImageChange} />
-            {preview && <img src={preview} alt="Preview" className="image-preview" />}
+          <div className="file-input">
+            <label>Upload Proof (Image):</label>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            {preview && <img src={preview} alt="Preview" className="img-preview" />}
           </div>
 
-          <button type="submit">Submit Complaint</button>
-          <button type="button" onClick={handleBack} className="back-button">
-            ← Back
-          </button>
+          <button type="submit" className="submit-btn">Submit Complaint</button>
+          <button type="button" className="back-btn" onClick={() => navigate(-1)}>Back</button>
         </form>
       </div>
     </div>

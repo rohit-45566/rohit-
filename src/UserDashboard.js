@@ -1,84 +1,44 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import logout  from './logout'; // Import the logout function
-import "./UserDashboard.css"; // Import styling
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import './UserDashboard.css';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  // Determine greeting based on time of day
-  
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/user/login');
+  };
 
   return (
-    
     <div className="dashboard-container">
-      <header className="dashboard-header">
-        <div className="profile-section">
-          <img
-            src={require("./images/cgpt.png")} // Profile picture
-            alt="Profile"
-            className="profile-pic"
-          />
-          <h1>WELCOME TO OUR WEBSITE</h1>
-          <button onClick={() => logout(navigate)}>Logout</button> {/* Logout button */}
+      <nav className="dashboard-nav">
+        <h1>Welcome, {user ? user.username : 'User'}</h1>
+        <button onClick={handleLogout} className="logout-btn">Logout</button>
+      </nav>
+      
+      <div className="dashboard-content">
+        <div className="card" onClick={() => navigate('/post-complaint')}>
+          <h3>Post a Complaint</h3>
+          <p>Report issues in your local area with images.</p>
         </div>
-      </header>
-
-      <main className="dashboard-main">
-        <div className="dashboard-grid">
-          {/* Post a Complaint Card */}
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/post-complaint")} // Navigate to Post Complaint page
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Post a Complaint"
-              className="card-icon"
-            />
-            <h2>Post a Complaint</h2>
-          </div>
-
-          {/* Raise an Issue Card */}
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/viewevents")} // Navigate to Raise an Issue page
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="View Events"
-              className="card-icon"
-            />
-            <h2>View Events</h2>
-          </div>
-
-          {/* Status Card */}
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/viewstatus")} // Navigate to Status page
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Status"
-              className="card-icon"
-            />
-            <h2>View Status</h2>
-          </div>
-
-          {/* Feedback Card */}
-          <div
-            className="dashboard-card"
-            onClick={() => navigate("/feedback")} // Navigate to Feedback page
-          >
-            <img
-              src={require("./images/cgpt.png")}
-              alt="Feedback"
-              className="card-icon"
-            />
-            <h2>Feedback</h2>
-          </div>
+        
+        <div className="card" onClick={() => navigate('/view-status')}>
+          <h3>Complaint Status</h3>
+          <p>Track the progress of your submitted complaints.</p>
         </div>
-      </main>
+        
+        <div className="card" onClick={() => navigate('/events')}>
+          <h3>Local Events</h3>
+          <p>View upcoming events and announcements.</p>
+        </div>
+
+        <div className="card" onClick={() => navigate('/feedback')}>
+          <h3>Give Feedback</h3>
+          <p>Help us improve our services.</p>
+        </div>
+      </div>
     </div>
   );
 };
