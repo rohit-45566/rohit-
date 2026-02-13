@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import blackBackground from "./images/bg2.png"; // Import black background
+import blackBackground from "./images/cgpt.png"; // Import black background
 
 const UserLogin = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const UserLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
+    const userRole = localStorage.removeItem("userRole");
     if (userRole === 'admin') {
       alert('You are already logged in as an admin. Please log out to access user.');
       navigate('/admin/dashboard');
@@ -54,41 +54,49 @@ const UserLogin = () => {
   };
 
   return (
-    <div 
+    <div
       className="user-login-container"
-      style={{ backgroundImage: `url(${blackBackground})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      style={{
+        backgroundImage: `url(${blackBackground})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       <div className="user-login-box">
-        <h2 style={{ marginBottom: '20px', textAlign: 'center', color: '#1a73e8' }}>User Login</h2>
+        <h2 style={{ textAlign: "center", color: "#1a73e8" }}>
+          Citizen Login
+        </h2>
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <input
-              className="form-input"
-              name="username"
-              value={formData.username}
+              name="email"
+              type="email"
+              placeholder="Email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="Username"
-              type="text"
               required
             />
           </div>
+
           <div className="form-group">
             <input
-              className="form-input"
               name="password"
+              type="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Password"
-              type="password"
               required
             />
           </div>
-          <button className="common-button" type="submit">Login</button>
+
+          <button className="common-button" type="submit">
+            Login
+          </button>
         </form>
       </div>
     </div>
   );
-  
 };
 
 export default UserLogin;

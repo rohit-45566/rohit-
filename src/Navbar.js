@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout } from './utils/logout'; // Import the logout function
+import logout from './logout'; // Import the logout function
 import Modal from './Modal'; // Import the Modal component
 
 const Navbar = () => {
@@ -16,21 +16,16 @@ const Navbar = () => {
     setShowModal(false); // Close the modal
   };
 
+  const userRole = localStorage.getItem("userRole");
+
+  if (userRole) return null; // If logged in, don't show navbar
+
   return (
     <nav>
-      <ul className="nav-links">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/user/signup">User Signup</Link></li>
-        <li><Link to="/user/login">User Login</Link></li>
-        <li><Link to="/admin/signup">Admin Signup</Link></li>
-        <li><Link to="/admin/login">Admin Login</Link></li>
-        <li>
-          <button className="logout-button" onClick={handleLogout}>Logout</button> {/* Styled Logout button */}
-        </li>
-      </ul>
-      {showModal && <Modal message="Logged out successfully!" onClose={closeModal} />} {/* Render modal if showModal is true */}
+      <a href="/">Home</a>
+      <a href="/user/login">User Login</a>
+      <a href="/admin/login">Admin Login</a>
     </nav>
   );
 };
-
 export default Navbar;

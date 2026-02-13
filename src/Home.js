@@ -1,48 +1,69 @@
-// import React from 'react';
-
-// const Home = () => {
-//   return (
-//     <div className="home">
-//       {/* Image added using <img> tag */}
-      
-//     </div>
-//   );
-// };
-
-// export default Home;
-
 import React from "react";
-// import { useNavigate } from "react-router-dom"; // Import useNavigate
-import LandingImage from "./images/—Pngtree—contact our male customer service_5412873.png";
+import LandingImage from "./images/cgpt.png";
+import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
 const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="homepage">
-      
-      {/* Main Content */}
-      <main className="main-content">
-        <br></br><br></br>
-        {/* Image Section */}
-        <div className="image-section">
-          <img src={LandingImage} alt="Customer Support Representative" />
-        </div>
 
-        {/* Text Section */}
-        <div className="text-section">
-          <h1>Complaint Management System</h1>
-          <p className="main-text">
-          Welcome to your College Complaint Management System 
-          <br></br>
-          A dedicated platform designed to address student concerns effectively. From academic issues to campus facilities, we're committed to making your college experience better through prompt resolution and transparent communication.
-          </p>
-          <div className="features-list">
-          <p>✓ Convenient complaint posting for all campus issues</p>
-            <p>✓ Real-time status tracking of your submitted complaints</p>
-            <p>✓ Campus events page with timely updates and announcements</p>
-            <p>✓ Comprehensive feedback system to improve our services</p>
+      {/* Hero Section */}
+      <main className="main-content">
+        <div className="hero-section">
+          <div className="hero-text">
+            <h1>Local Area Complaint Management System</h1>
+            <p className="hero-subtext">
+              A smart digital platform to report and track local civic issues 
+              like road damage, water supply problems, garbage collection, street lights and more.
+            </p>
+            <div className="hero-buttons">
+              <button
+                className="cta-button"
+                onClick={() => navigate("/user/signup")}
+              >
+                Get Started
+              </button>
+              
+            </div>
+          </div>
+
+          <div className="hero-image">
+            <img src={LandingImage} alt="Local Area Support System" />
           </div>
         </div>
+
+        {/* Features Section */}
+        <section className="features-section">
+          <h2>Why Choose Us?</h2>
+          <div className="features-cards">
+            <div className="feature-card">
+              <p>✓ Easy complaint submission</p>
+            </div>
+            <div className="feature-card">
+              <p>✓ Real-time complaint tracking</p>
+            </div>
+            <div className="feature-card">
+              <p>✓ Location-based issue reporting</p>
+            </div>
+            <div className="feature-card">
+              <p>✓ Direct communication with authorities</p>
+            </div>
+            <div className="feature-card">
+              <p>✓ Transparent and accountable resolutions</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Callout Section */}
+        <section className="callout-section">
+          <h2>Empowering Citizens, Improving Cities</h2>
+          <p>
+            Join thousands of users who are making their neighborhoods better 
+            by reporting issues efficiently and transparently.
+          </p>
+        </section>
       </main>
     </div>
   );

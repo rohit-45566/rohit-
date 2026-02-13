@@ -1,14 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./UserSignup.css";
-import blackBackground from "./images/bg2.png";
-
 
 const UserSignup = () => {
   const navigate = useNavigate();
+
+  // 📍 Dhule Areas
+  const dhuleAreas = [
+    "Deopur",
+    "Sakri Road",
+    "Mohadi",
+    "Avdhan",
+    "Nakane",
+    "Fagne",
+    "Chitod Road",
+    "Wadala",
+    "MIDC",
+    "Laling",
+  ];
+
   const [formData, setFormData] = useState({
-    username: "",
+    fullName: "",
     email: "",
+    mobile: "",
+    state: "Maharashtra",
+    district: "Dhule",
+    city: "Dhule City",
+    area: "",
+    pincode: "",
     password: "",
   });
 
@@ -20,8 +39,8 @@ const UserSignup = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
     }));
 
@@ -32,31 +51,30 @@ const UserSignup = () => {
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(email);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
+
+    setErrors((prev) => ({
+      ...prev,
       email: isValid ? "" : "Invalid email format.",
     }));
+
     return isValid;
   };
 
   const validatePassword = (password) => {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+
     const isValid = passwordRegex.test(password);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
+
+    setErrors((prev) => ({
+      ...prev,
       password: isValid
         ? ""
-        : "Password must be at least 8 characters, include uppercase, lowercase, number, and a special character.",
+        : "Password must be at least 8 characters, include uppercase, lowercase, number, and special character.",
     }));
+
     return isValid;
   };
-
-  const sendEmail = () => {
-    const templateParams = {
-      username: formData.username,
-      email: formData.email,
-    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,75 +95,116 @@ const UserSignup = () => {
       });
 
       const result = await response.json();
+
       if (response.ok) {
-        alert(result.message);
-        sendEmail(); // send welcome email after successful signup
+        alert("Registration successful! Please login.");
         navigate("/user/login");
       } else {
-        alert(result.error || "Signup failed.");
+        alert(result.message || "Signup failed.");
       }
     } catch (error) {
       console.error("Signup Error:", error);
-      alert("An error occurred during signup.");
+      alert("Server error. Please try again.");
     }
   };
 
   return (
-    <div
-      className="user-signup-container"
-      style={{ backgroundImage: `url(${blackBackground})` }}
-    >
+    <div className="user-signup-container">
       <div className="user-signup-box">
-        <h2>User Signup</h2>
+        <h2>Registration</h2>
+
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              className={`form-input ${errors.email ? "error-input" : ""}`}
-              required
-            />
-            {errors.email && <span className="error">{errors.email}</span>}
-          </div>
+          <input
+            name="fullName"
+            type="text"
+            placeholder="Full Name"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+          />
 
-          <div className="form-group">
-            <input
-              name="username"
-              type="text"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
-          </div>
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          {errors.email && <span className="error">{errors.email}</span>}
 
-          <div className="form-group">
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className={`form-input ${errors.password ? "error-input" : ""}`}
-              required
-            />
-            {errors.password && (
-              <span className="error">{errors.password}</span>
-            )}
-          </div>
+          <input
+            name="mobile"
+            type="text"
+            placeholder="Mobile Number"
+            value={formData.mobile}
+            onChange={handleChange}
+            required
+          />
 
-          <p className="note">* Use your registration number as your username.</p>
+          {/* Fixed State */}
+          <input
+            type="text"
+            value="Maharashtra"
+            disabled
+          />
+
+          {/* Fixed District */}
+          <input
+            type="text"
+            value="Dhule"
+            disabled
+          />
+
+          {/* Fixed City */}
+          <input
+            type="text"
+            value="Dhule City"
+            disabled
+          />
+
+          {/* Area Dropdown */}
+          <select
+            name="area"
+            value={formData.area}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Area</option>
+            {dhuleAreas.map((area, index) => (
+              <option key={index} value={area}>
+                {area}
+              </option>
+            ))}
+          </select>
+
+          <input
+            name="pincode"
+            type="text"
+            placeholder="Pincode"
+            value={formData.pincode}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          {errors.password && (
+            <span className="error">{errors.password}</span>
+          )}
 
           <button
             type="submit"
             className="signup-button"
             disabled={errors.email || errors.password}
           >
-            Sign Up
+            Register
           </button>
         </form>
       </div>

@@ -10,9 +10,10 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
+    const userRole = localStorage.getItem("userRole");
+
     if (userRole === 'user') {
-      alert('You are already logged in as a user. Please log out to access admin.');
+      alert('You are already logged in as a user. Please log out first.');
       navigate('/user/dashboard');
     }
   }, [navigate]);
@@ -27,6 +28,7 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await fetch('http://localhost:5000/admin/login', {
         method: 'POST',
@@ -39,44 +41,43 @@ const AdminLogin = () => {
       if (response.ok) {
         alert(result.message);
         localStorage.setItem('userRole', 'admin');
-        navigate('/admin/dashboard'); 
+        navigate('/admin/dashboard');
       } else {
         alert(result.error);
       }
+
     } catch (error) {
       console.error('Login Error:', error);
-      alert('An error occurred during login.');
+      alert('Server error');
     }
   };
 
   return (
     <div className="admin-login-container">
       <div className="admin-login-box">
-        <h2 style={{ marginBottom: '20px', textAlign: 'center', color: '#1a73e8' }}>Admin Login</h2>
+        <h2 style={{ textAlign: 'center', color: '#1a73e8' }}>
+          Admin Login
+        </h2>
+
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Username"
-              type="text"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <input
-              className="form-input"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Password"
-              type="password"
-              required
-            />
-          </div>
-          <button className="common-button" type="submit">Login</button>
+          <input
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Username"
+            required
+          />
+
+          <input
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            required
+          />
+
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>

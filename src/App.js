@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import UserSignup from './UserSignup';
 import UserLogin from './UserLogin';
-import AdminSignup from './AdminSignup';
 import AdminLogin from './AdminLogin';
 import UserDashboard from './UserDashboard';
 import AdminDashboard from './AdminDashboard';
@@ -13,7 +12,7 @@ import Home from './Home';
 import ViewFeedback from './ViewFeedback';
 import StatusPage from './StatusPage';
 import ViewStatus from './ViewStatus'; // Import Home component
-import blackBackground from './images/bg2.png'; // Import black background
+import blackBackground from './images/cgpt.png'; // Import black background
 import Events from './Events';
 import ViewEvents from './ViewEvents';
 import './App.css';
@@ -47,7 +46,6 @@ const App = () => {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/user/signup">User Signup</Link></li>
             <li><Link to="/user/login">User Login</Link></li>
-            <li><Link to="/admin/signup">Admin Signup</Link></li>
             <li><Link to="/admin/login">Admin Login</Link></li>
           </ul>
         </nav>
@@ -55,7 +53,6 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/user/signup" element={<UserSignup />} />
           <Route path="/user/login" element={<UserLogin />} />
-          <Route path="/admin/signup" element={<AdminSignup />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/user/dashboard" element={<UserDashboard />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

@@ -1,18 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { logout } from './utils/logout'; // Import the logout function
+import logout  from './logout'; // Import the logout function
 import "./UserDashboard.css"; // Import styling
 
 const UserDashboard = () => {
   const navigate = useNavigate();
 
   // Determine greeting based on time of day
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 18) return "Good Afternoon";
-    return "Good Evening";
-  };
+  
 
   return (
     
@@ -20,11 +15,11 @@ const UserDashboard = () => {
       <header className="dashboard-header">
         <div className="profile-section">
           <img
-            src={require("./images/profile.png")} // Profile picture
+            src={require("./images/cgpt.png")} // Profile picture
             alt="Profile"
             className="profile-pic"
           />
-          <h1 className="greeting">{getGreeting()}, User!</h1>
+          <h1>WELCOME TO OUR WEBSITE</h1>
           <button onClick={() => logout(navigate)}>Logout</button> {/* Logout button */}
         </div>
       </header>
@@ -37,7 +32,7 @@ const UserDashboard = () => {
             onClick={() => navigate("/post-complaint")} // Navigate to Post Complaint page
           >
             <img
-              src={require("./images/post-complaint.png")}
+              src={require("./images/cgpt.png")}
               alt="Post a Complaint"
               className="card-icon"
             />
@@ -50,7 +45,7 @@ const UserDashboard = () => {
             onClick={() => navigate("/viewevents")} // Navigate to Raise an Issue page
           >
             <img
-              src={require("./images/raise-issue.jpg")}
+              src={require("./images/cgpt.png")}
               alt="View Events"
               className="card-icon"
             />
@@ -63,7 +58,7 @@ const UserDashboard = () => {
             onClick={() => navigate("/viewstatus")} // Navigate to Status page
           >
             <img
-              src={require("./images/status.png")}
+              src={require("./images/cgpt.png")}
               alt="Status"
               className="card-icon"
             />
@@ -76,7 +71,7 @@ const UserDashboard = () => {
             onClick={() => navigate("/feedback")} // Navigate to Feedback page
           >
             <img
-              src={require("./images/feedback.png")}
+              src={require("./images/cgpt.png")}
               alt="Feedback"
               className="card-icon"
             />

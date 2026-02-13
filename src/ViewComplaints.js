@@ -51,7 +51,7 @@ const ViewComplaints = () => {
             <th>Date</th>
             <th>Location</th>
             <th>Sub-Location</th>
-            <th>Room Number</th>
+            <th>Pin Code</th>
             <th>Image</th>
           </tr>
         </thead>

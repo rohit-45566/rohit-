@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PostComplaint.css';
-import blueBackground from "./images/bg3.jpg";
+import blueBackground from "./images/cgpt.png";
 
 const PostComplaint = () => {
   const navigate = useNavigate();
@@ -12,12 +12,11 @@ const PostComplaint = () => {
   const [date, setDate] = useState('');
   const [location, setLocation] = useState('');
   const [subLocation, setSubLocation] = useState('');
-  const [roomNo, setRoomNo] = useState('');
   const [error, setError] = useState('');
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  // ✅ Get username and email from localStorage on mount
+  // Get username and email from localStorage on mount
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
@@ -35,10 +34,10 @@ const PostComplaint = () => {
     setSubLocation(e.target.value);
   };
 
-  
   const handleBack = () => {
     navigate(-1); // Navigate to the previous page
   };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -48,7 +47,8 @@ const PostComplaint = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!complaintText || !username || !email || !date || !location || (location !== 'mess' && !subLocation)) {
+    // Validation
+    if (!complaintText || !username || !email || !date || !location || ((location === 'college' || location === 'hostel') && !subLocation)) {
       setError('All fields are required!');
       return;
     }
@@ -61,7 +61,6 @@ const PostComplaint = () => {
       formData.append('date', date);
       formData.append('location', location);
       formData.append('subLocation', subLocation);
-      formData.append('roomNo', roomNo);
       if (image) formData.append('image', image);
 
       const response = await fetch('http://localhost:5000/submit-complaint', {
@@ -69,14 +68,10 @@ const PostComplaint = () => {
         body: formData,
       });
 
-     
-      
-        // ✅ Show popup after successful
+      if (response.ok) {
         alert('Your complaint was submitted successfully!');
-      
         navigate('/user/dashboard');
-      }
-       else {
+      } else {
         setError('Failed to submit complaint');
       }
     } catch (err) {
@@ -86,31 +81,34 @@ const PostComplaint = () => {
 
   return (
     <div className="post" style={{ backgroundImage: `url(${blueBackground})` }}>
-      
       <div className="container">
         <h1>Post a Complaint</h1>
 
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="complaint-form">
-        <input
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
 
-type="text"
-placeholder="Username"
-value={username}
-onChange={(e) => setUsername(e.target.value)} // ← this line is missing
-required
-/>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-<input
-type="email"
-placeholder="Email"
-value={email}
-onChange={(e) => setEmail(e.target.value)} // ← this too
-required
-/>
-
- <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+          />
 
           <select value={location} onChange={handleLocationChange} required>
             <option value="">Select Location</option>
@@ -153,15 +151,6 @@ required
             </select>
           )}
 
-          {(location === 'college' || location === 'hostel') && subLocation && (
-            <input
-              type="text"
-              placeholder="Room Number"
-              value={roomNo}
-              onChange={(e) => setRoomNo(e.target.value)}
-              required
-            />
-          )}
 
           <textarea
             placeholder="Describe your complaint..."
@@ -177,14 +166,13 @@ required
           </div>
 
           <button type="submit">Submit Complaint</button>
-
-          <button onClick={handleBack} className="back-button">  ← Back  </button>
+          <button type="button" onClick={handleBack} className="back-button">
+            ← Back
+          </button>
         </form>
       </div>
-
     </div>
   );
 };
 
 export default PostComplaint;
-
